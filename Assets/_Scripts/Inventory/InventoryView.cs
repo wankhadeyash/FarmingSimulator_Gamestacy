@@ -35,4 +35,9 @@ public class InventoryView : MonoBehaviour
         CropViewlInfo view = m_CropViewInfo.Find(x => x.Id == id);
         view.AmountText.text = amount.ToString();
     }
+
+    public void PlaceCropButtonPressed(int id) 
+    {
+        m_Controller.OnPlaceCropButtonPressed(id, -1);
+    }
 }

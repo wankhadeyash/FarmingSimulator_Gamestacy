@@ -1,22 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 //Using these interfaces to limit the methods exposed to respective classes
 public interface IInventoryModel // passed to Model
 {
-    void OnInventoryUpdate(List<CropModelInfo> cropInfo);
+    void FetchInventory(List<CropModelInfo> cropInfo);
+
+    void OnInventoryUpdate(CropModelInfo cropModelInfo);
 }
 
 public interface IInventoryView // passed to view
 {
-    
+    void OnPlaceCropButtonPressed(int id, int amountChanged);
 }
 public class InventoryController : MonoBehaviour,IInventoryModel,IInventoryView //MVC pattern to handle inventory
 {
     public InventoryModel m_Model;
     public InventoryView m_View;
-
+    public static UnityAction<int, int,Crop> OnCropPlanted;// int-> Id of crop, int -> Amount planted, Crop-> CropScriptable object
 
     private void OnEnable()
     {
@@ -53,7 +56,7 @@ public class InventoryController : MonoBehaviour,IInventoryModel,IInventoryView 
 
     #region IInventoryModel
 
-    public void OnInventoryUpdate(List<CropModelInfo> cropInfo)
+    public void FetchInventory(List<CropModelInfo> cropInfo)
     {
         //Update on UI
         foreach (CropModelInfo data in cropInfo) 
@@ -61,5 +64,20 @@ public class InventoryController : MonoBehaviour,IInventoryModel,IInventoryView 
             m_View.UpdateUIData(data.Id,data.m_Amount);
         }
     }
+
+    public void OnInventoryUpdate(CropModelInfo cropModelInfo)
+    {
+        OnCropPlanted?.Invoke(cropModelInfo.Id, cropModelInfo.m_Amount,cropModelInfo.crop);
+    }
+    #endregion
+
+    #region IInventoryView
+    public void OnPlaceCropButtonPressed(int id, int amountChanged)
+    {
+        m_Model.UpdateInventoryData(id, amountChanged);
+        
+    }
+
+  
     #endregion
 }
