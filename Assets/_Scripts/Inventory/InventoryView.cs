@@ -11,33 +11,24 @@ public struct CropViewlInfo
 }
 public class InventoryView : MonoBehaviour
 {
-    public List<CropViewlInfo> m_CropViewInfo;
-    IInventoryView m_Controller;
-    // Start is called before the first frame update
-    void Start()
+    public GameObject cropPrefab;
+    public Transform cropParent;
+    // Add any additional UI elements here
+
+    public void UpdateView(List<Crop> crops)
     {
+        foreach (Transform child in cropParent)
+        {
+            Destroy(child.gameObject);
+        }
 
-    }
+        foreach (Crop crop in crops)
+        {
+            GameObject cropGO = Instantiate(cropPrefab, cropParent);
+            CropView cropView = cropGO.GetComponent<CropView>();
+            cropView.UpdateView(crop);
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void Initialize(IInventoryView controller)
-    {
-        m_Controller = controller;
-    }
-
-    public void UpdateUIData(int id, int amount) 
-    {
-        CropViewlInfo view = m_CropViewInfo.Find(x => x.Id == id);
-        view.AmountText.text = amount.ToString();
-    }
-
-    public void PlaceCropButtonPressed(int id) 
-    {
-        m_Controller.OnPlaceCropButtonPressed(id, -1);
+        // Update any additional UI elements here
     }
 }

@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
     Animator m_Animator;
-
+    CharacterController m_CharacterController;
     private void OnEnable()
     {
         GameManager.OnGameManagerStateChanged += OnGameManagerStateChanged;
@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
                 break;
             case GameState.Initialize:
                 m_Animator = GetComponent<Animator>();
+                m_CharacterController = GetComponent<CharacterController>();
                 break;
             case GameState.Playing:
                 break;
@@ -63,7 +64,8 @@ public class PlayerController : MonoBehaviour
         if (moveInput.magnitude > 0)
         {
             Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y) * moveSpeed * Time.deltaTime;
-            transform.Translate(movement, Space.World);
+           // transform.Translate(movement, Space.World);
+            m_CharacterController.Move(movement);
             ChangeAnimation("RunForward");
             transform.rotation = Quaternion.LookRotation(movement);
         }
