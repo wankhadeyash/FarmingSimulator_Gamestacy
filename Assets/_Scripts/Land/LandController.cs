@@ -17,21 +17,45 @@ public class LandController : MonoBehaviour
     public Crop m_CropToPlant;
     public LandView m_LandView;
     public List<CropLocationInfo> m_CropLocationInfo; // Location at which plants will be planted
+    Animator m_Animator;
     [HideInInspector] public List<CropController> m_CropControllers = new List<CropController>();
     private void OnEnable()
     {
         //InventoryController.OnCropPlanted += OnCropPlanted;
+        GameManager.OnGameManagerStateChanged += OnGameManagerStateChanged;
+
     }
 
 
 
     private void OnDisable()
     {
-       // InventoryController.OnCropPlanted -= OnCropPlanted;
+        // InventoryController.OnCropPlanted -= OnCropPlanted;
+        GameManager.OnGameManagerStateChanged -= OnGameManagerStateChanged;
+
 
     }
+    private void OnGameManagerStateChanged(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.Start:
+                break;
+            case GameState.Initialize:
+                m_Animator = GetComponent<Animator>();
+                break;
+            case GameState.Playing:
+                break;
+            case GameState.Paused:
+                break;
+            case GameState.Resume:
+                break;
+            default:
+                break;
 
-    
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +69,7 @@ public class LandController : MonoBehaviour
     }
     public void ReadyToHarvest()
     {
+        m_Animator.Play("ReadyToHarvest");
         m_Land.ReadyToHarvestQuantity++;
         m_LandView.m_QuantityOfReadToHarvestText.text = m_Land.ReadyToHarvestQuantity.ToString();
     }
@@ -54,7 +79,7 @@ public class LandController : MonoBehaviour
         if (m_Land.ReadyToHarvestQuantity <= 0)
             return;
 
-        //Empty out all the locations
+        //Empty out all the locations for plantation of new crops
         for (int i = 0; i < m_CropLocationInfo.Count; i++)
         {
             CropLocationInfo cropLocation = m_CropLocationInfo[i];
@@ -66,6 +91,7 @@ public class LandController : MonoBehaviour
             }
         }
 
+        //Destroy the crops which are ready to harvest and handle the CropControllers List Accordingly
         for(int i = m_CropControllers.Count-1; i >= 0; i--) 
         {
             if (!m_CropControllers[i].m_IsReadyToHarvest)
