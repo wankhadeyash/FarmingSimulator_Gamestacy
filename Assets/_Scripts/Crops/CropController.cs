@@ -8,23 +8,13 @@ public class CropController : MonoBehaviour
     float m_GrowFactor;
     public float m_GrowSpeed;
     [HideInInspector] public bool m_IsReadyToHarvest;
-    LandController m_LandController;
-    private void Start()
+    public LandController m_LandController;
+
+    private void OnEnable()
     {
-        var landControllers = FindObjectsOfType<LandController>();
-        foreach (LandController controller in landControllers) 
-        {
-            if (Id == controller.Id) 
-            {
-                m_LandController = controller;
-                m_LandController.m_CropControllers.Add(this);
-                break;
-            }
-        }
+        
         StartCoroutine(Co_GrowCrop());
-    }   
-
-
+    }
     IEnumerator Co_GrowCrop() 
     {
         transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
@@ -38,12 +28,11 @@ public class CropController : MonoBehaviour
         m_LandController.ReadyToHarvest();
     }
 
-    public void HarvestCrop()
+    public void ResetCrop() 
     {
-
-      //  cropView.UpdateView(crop);
-        Inventory inventory = FindObjectOfType<Inventory>();
-        //inventory.AddCrop(m_Crop);
+        StopAllCoroutines();
+        m_GrowFactor = 0;
+        m_IsReadyToHarvest = false;
     }
 
 }

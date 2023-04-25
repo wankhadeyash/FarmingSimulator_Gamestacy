@@ -18,7 +18,6 @@ public class LandController : MonoBehaviour
     public LandView m_LandView;
     public List<CropLocationInfo> m_CropLocationInfo; // Location at which plants will be planted
     Animator m_Animator;
-    [HideInInspector] public List<CropController> m_CropControllers = new List<CropController>();
     private void OnEnable()
     {
         //InventoryController.OnCropPlanted += OnCropPlanted;
@@ -43,6 +42,7 @@ public class LandController : MonoBehaviour
                 break;
             case GameState.Initialize:
                 m_Animator = GetComponent<Animator>();
+                PoolCrops();
                 break;
             case GameState.Playing:
                 break;
@@ -56,6 +56,24 @@ public class LandController : MonoBehaviour
         }
     }
 
+    //Object pooling crops
+    void PoolCrops() 
+    {
+        for (int i = 0; i < m_CropLocationInfo.Count; i++) 
+        {
+            CropLocationInfo cropLocation = m_CropLocationInfo[i];
+            cropLocation.CurrentCropController = Instantiate(m_CropToPlant.Prefab, m_CropLocationInfo[i].Location.transform.position, Quaternion.identity, m_CropLocationInfo[i].Location.transform).GetComponent<CropController>();
+            cropLocation.CurrentCropController.m_LandController = this;
+            if (i<2)
+            {
+                cropLocation.CurrentCropController.gameObject.SetActive(true);
+                cropLocation.IsOccupided = true;
+            }
+            else
+                cropLocation.CurrentCropController.gameObject.SetActive(false);
+            m_CropLocationInfo[i] = cropLocation;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -86,24 +104,12 @@ public class LandController : MonoBehaviour
             if (cropLocation.IsOccupided && cropLocation.CurrentCropController.m_IsReadyToHarvest)
             {
                 cropLocation.IsOccupided = false;
-                cropLocation.CurrentCropController = null;
-                m_CropLocationInfo[i] = cropLocation;
-            }
-        }
-
-        //Destroy the crops which are ready to harvest and handle the CropControllers List Accordingly
-        for(int i = m_CropControllers.Count-1; i >= 0; i--) 
-        {
-            if (!m_CropControllers[i].m_IsReadyToHarvest)
-                continue;
-            else 
-            {
+                cropLocation.CurrentCropController.ResetCrop();
+                cropLocation.CurrentCropController.gameObject.SetActive(false);
                 m_Land.SeedQuantity += Random.Range(1, 5);
                 m_Land.ReadyToHarvestQuantity--;
-                Destroy(m_CropControllers[i].gameObject);
-                m_CropControllers.RemoveAt(i);
+                m_CropLocationInfo[i] = cropLocation;
             }
-            
         }
         
         m_LandView.m_QuantityOfReadToHarvestText.text = m_Land.ReadyToHarvestQuantity.ToString();
@@ -121,7 +127,7 @@ public class LandController : MonoBehaviour
             {
                 CropLocationInfo cropLocation = m_CropLocationInfo[i];
                 cropLocation.IsOccupided = true;
-                cropLocation.CurrentCropController = Instantiate(m_CropToPlant.Prefab, cropLocation.Location.transform.position, Quaternion.identity, cropLocation.Location.transform).GetComponent<CropController>();
+                cropLocation.CurrentCropController.gameObject.SetActive(true);
                 m_CropLocationInfo[i] = cropLocation;
                 m_Land.SeedQuantity--;
                 m_LandView.m_QuantityOfSeeds.text = m_Land.SeedQuantity.ToString();
