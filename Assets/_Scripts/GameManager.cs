@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,25 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
     private GameState m_CurrentState;
     public static GameState CurrentState => s_Instance.m_CurrentState;
     private static GameManager s_Instance;
+
+
+    private void OnEnable()
+    {
+        LevelManager.OnLevelChanged += OnLevelChanged;
+    }
+
+    
+
+    private void OnDisable()
+    {
+        LevelManager.OnLevelChanged -= OnLevelChanged;
+
+    }
+
+    private void OnLevelChanged(int arg0)
+    {
+        ChangeGameManagerState(GameState.Start);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -66,7 +86,6 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
 
     private void StartStateHandler()
     {
-        
         ChangeGameManagerState(GameState.Initialize);
     }
     private void InitializeStateHandler()
