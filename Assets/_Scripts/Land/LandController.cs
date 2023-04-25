@@ -95,7 +95,10 @@ public class LandController : MonoBehaviour
     public void HarvestAll() 
     {
         if (m_Land.ReadyToHarvestQuantity <= 0)
+        {
+            ErrorDisplay.DisplayError("No Crops Ready To Harvest");
             return;
+        }
 
         //Empty out all the locations for plantation of new crops
         for (int i = 0; i < m_CropLocationInfo.Count; i++)
@@ -119,8 +122,11 @@ public class LandController : MonoBehaviour
 
     public void PlantCrop() 
     {
-        if (m_Land.SeedQuantity<= 0)
+        if (m_Land.SeedQuantity <= 0)
+        {
+            ErrorDisplay.DisplayError("Not Enough Seeds");
             return;
+        }
         for (int i = 0; i < m_CropLocationInfo.Count; i++) 
         {
             if (!m_CropLocationInfo[i].IsOccupided) 
