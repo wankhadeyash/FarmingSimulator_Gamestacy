@@ -37,6 +37,7 @@ public class NaturalResource : MonoBehaviour
             case GameState.Start:
                 break;
             case GameState.Initialize:
+                m_Canvas.gameObject.SetActive(false);
                 m_LandDisplayNameText.text = m_LandCropType.ToString();
                 break;
             case GameState.Playing:

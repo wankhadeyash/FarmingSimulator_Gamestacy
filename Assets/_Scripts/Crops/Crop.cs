@@ -6,6 +6,8 @@ public enum CropType
 {
     None,
     Tomato,
+    Watermeloen,
+    Cabbage,
     Water,
     Milk
 }

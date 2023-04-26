@@ -11,6 +11,10 @@ public class LandView : MonoBehaviour
     public TextMeshProUGUI m_QuantityOfSeedsText;
     public TextMeshProUGUI m_QuantityOfResourceText;
 
+    private void OnEnable()
+    {
+        m_Canvas.gameObject.SetActive(false);
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player") 

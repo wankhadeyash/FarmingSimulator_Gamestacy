@@ -11,12 +11,12 @@ public class CropController : MonoBehaviour
 
     private void OnEnable()
     {
-        
         StartCoroutine(Co_GrowCrop());
+
     }
     IEnumerator Co_GrowCrop() 
     {
-        transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        transform.localScale = Vector3.zero;
         while (m_GrowFactor < 2) 
         {
             yield return new WaitForSecondsRealtime(0.1f);
