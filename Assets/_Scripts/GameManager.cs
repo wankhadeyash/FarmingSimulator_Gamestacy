@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
     }
     private void PlayingStateHandler()
     {
-
+        Debug.Log("Entered Playing");
     }
 
     private void PausedStateHandler()
@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
     }
     private void ResumeStateHandler() 
     {
-        ChangeGameManagerState(GameState.Playing);
+       // ChangeGameManagerState(GameState.Playing);
 
     }
 }

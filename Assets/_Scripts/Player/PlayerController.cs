@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnGameManagerStateChanged(GameState state)
     {
+
         switch (state)
         {
             case GameState.Start:

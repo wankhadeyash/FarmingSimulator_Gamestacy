@@ -7,22 +7,24 @@ using UnityEngine;
 public struct CropLocationInfo 
 {
     public GameObject Location;
-    public CropController CurrentCropController;
+    [HideInInspector] public CropController CurrentCropController;
     public bool IsOccupided;
 }
 public class LandController : MonoBehaviour
 {
-    public int Id;
     Land m_Land = new Land();
+    public CropType m_RequiredCropType;
+    public CropType m_LandCropType;
     public Crop m_CropToPlant;
     public LandView m_LandView;
+    public bool m_RequireSeeds;
     public List<CropLocationInfo> m_CropLocationInfo; // Location at which plants will be planted
     Animator m_Animator;
     private void OnEnable()
     {
         //InventoryController.OnCropPlanted += OnCropPlanted;
         GameManager.OnGameManagerStateChanged += OnGameManagerStateChanged;
-
+        Inventory.OnInventoryUpdated += OnInventoryUpdated;
     }
 
 
@@ -31,6 +33,7 @@ public class LandController : MonoBehaviour
     {
         // InventoryController.OnCropPlanted -= OnCropPlanted;
         GameManager.OnGameManagerStateChanged -= OnGameManagerStateChanged;
+        Inventory.OnInventoryUpdated -= OnInventoryUpdated;
 
 
     }
@@ -42,6 +45,7 @@ public class LandController : MonoBehaviour
                 break;
             case GameState.Initialize:
                 m_Animator = GetComponent<Animator>();
+                m_LandView.m_LandDisplayName.text = m_LandCropType.ToString();
                 PoolCrops();
                 break;
             case GameState.Playing:
@@ -54,6 +58,12 @@ public class LandController : MonoBehaviour
                 break;
 
         }
+    }
+
+    private void OnInventoryUpdated()
+    {
+        m_LandView.m_QuantityOfResourceText.text = Inventory.InventoryList.Find(x => x.cropType == m_RequiredCropType).amount.ToString();
+
     }
 
     //Object pooling crops
@@ -96,7 +106,7 @@ public class LandController : MonoBehaviour
     {
         if (m_Land.ReadyToHarvestQuantity <= 0)
         {
-            ErrorDisplay.DisplayError("No Crops Ready To Harvest");
+            ErrorDisplay.DisplayError("Not Ready To Harvest");
             return;
         }
 
@@ -106,27 +116,43 @@ public class LandController : MonoBehaviour
             CropLocationInfo cropLocation = m_CropLocationInfo[i];
             if (cropLocation.IsOccupided && cropLocation.CurrentCropController.m_IsReadyToHarvest)
             {
+                //Free crop location to plant for next iteration
                 cropLocation.IsOccupided = false;
                 cropLocation.CurrentCropController.ResetCrop();
                 cropLocation.CurrentCropController.gameObject.SetActive(false);
                 m_Land.SeedQuantity += Random.Range(1, 5);
                 m_Land.ReadyToHarvestQuantity--;
                 m_CropLocationInfo[i] = cropLocation;
+
+                //Add Item in inventory
+                Inventory.AddInventoryItem(m_LandCropType, 1);
             }
         }
         
         m_LandView.m_QuantityOfReadToHarvestText.text = m_Land.ReadyToHarvestQuantity.ToString();
-        m_LandView.m_QuantityOfSeeds.text = m_Land.SeedQuantity.ToString();
+        m_LandView.m_QuantityOfSeedsText.text = m_Land.SeedQuantity.ToString();
 
     }
 
     public void PlantCrop() 
     {
-        if (m_Land.SeedQuantity <= 0)
+        //Cannot plant if no seeds or no resources are available in inventory
+        if (m_Land.SeedQuantity <= 0 && m_RequireSeeds)
         {
             ErrorDisplay.DisplayError("Not Enough Seeds");
             return;
         }
+        InventoryInfo inventoryInfo = Inventory.InventoryList.Find(x => x.cropType == m_RequiredCropType);
+        if (inventoryInfo.amount <= 0)
+        {
+            ErrorDisplay.DisplayError($"Not enough {m_RequiredCropType}");
+            return;
+        }
+        else 
+        {
+            Inventory.RemoveInventoryItem(m_RequiredCropType, 1);
+        }
+        
         for (int i = 0; i < m_CropLocationInfo.Count; i++) 
         {
             if (!m_CropLocationInfo[i].IsOccupided) 
@@ -136,7 +162,7 @@ public class LandController : MonoBehaviour
                 cropLocation.CurrentCropController.gameObject.SetActive(true);
                 m_CropLocationInfo[i] = cropLocation;
                 m_Land.SeedQuantity--;
-                m_LandView.m_QuantityOfSeeds.text = m_Land.SeedQuantity.ToString();
+                m_LandView.m_QuantityOfSeedsText.text = m_Land.SeedQuantity.ToString();
                 break;
             }
         }

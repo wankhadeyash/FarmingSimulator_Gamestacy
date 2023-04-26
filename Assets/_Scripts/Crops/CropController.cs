@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class CropController : MonoBehaviour
 {
-    public int Id;
     float m_GrowFactor;
     public float m_GrowSpeed;
     [HideInInspector] public bool m_IsReadyToHarvest;
-    public LandController m_LandController;
+    [HideInInspector]  public LandController m_LandController;
 
     private void OnEnable()
     {
