@@ -4,26 +4,36 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
+//Data about physical location of Resource to plant and current status of location i.e is occupied or not
 public struct ResourceLocationInfo 
 {
     public GameObject Location;
     [HideInInspector] public ResourceController CurrentResourceController;
     public bool IsOccupided;
 }
+
+//Controller class for MVC pattern (Land.cs, LandView.cs, LandController)
+// Also uses object pooling to pool the resource
 public class LandController : MonoBehaviour
 {
-    Land m_Land = new Land();
+    Land m_Land = new Land(); // MVC data class
+
     public AudioClip m_ButtonPressAudio;
-    public ResourceType m_RequiredResourceType;
-    public ResourceType m_LandResourceType;
-    public Resource m_ResourceToPlant;
-    public LandView m_LandView;
-    public bool m_RequireSeeds;
+
+    public ResourceType m_RequiredResourceType; //Which other resouce is required to grow resource on this land
+    public ResourceType m_LandResourceType; //Current land growing resource type
+
+    public Resource m_ResourceToPlant;// Scriptable object which resource to plant
+
+    public LandView m_LandView;// MVC view
+
+    public bool m_RequireSeeds; // Does it requires seeds or can be grown based on required resource only
+
     public List<ResourceLocationInfo> m_ResourceLocationInfo; // Location at which plants will be planted
+
     Animator m_Animator;
     private void OnEnable()
     {
-        //InventoryController.OnCropPlanted += OnCropPlanted;
         GameManager.OnGameManagerStateChanged += OnGameManagerStateChanged;
         Inventory.OnInventoryUpdated += OnInventoryUpdated;
     }
@@ -32,11 +42,8 @@ public class LandController : MonoBehaviour
 
     private void OnDisable()
     {
-        // InventoryController.OnCropPlanted -= OnCropPlanted;
         GameManager.OnGameManagerStateChanged -= OnGameManagerStateChanged;
         Inventory.OnInventoryUpdated -= OnInventoryUpdated;
-
-
     }
     private void OnGameManagerStateChanged(GameState state)
     {
@@ -61,13 +68,14 @@ public class LandController : MonoBehaviour
         }
     }
 
+    //Whenever change in inventory-> look for change 
     private void OnInventoryUpdated()
     {
         m_LandView.m_QuantityOfResourceText.text = Inventory.InventoryList.Find(x => x.resourceType == m_RequiredResourceType).amount.ToString();
 
     }
 
-    //Object pooling resource
+    //Resource Object pooling
     void PoolCrops() 
     {
         for (int i = 0; i < m_ResourceLocationInfo.Count; i++) 
@@ -85,17 +93,8 @@ public class LandController : MonoBehaviour
             m_ResourceLocationInfo[i] = resourceLocation;
         }
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //Called from respective resourceController letting land controller know that it is ready to harvest
     public void ReadyToHarvest()
     {
         m_Animator.Play("ReadyToHarvest");
@@ -103,15 +102,17 @@ public class LandController : MonoBehaviour
         m_LandView.m_QuantityOfReadToHarvestText.text = m_Land.ReadyToHarvestQuantity.ToString();
     }
 
+    //Harvest all ready to harvest resources
     public void HarvestAll() 
     {
         if (m_Land.ReadyToHarvestQuantity <= 0)
         {
-            ErrorDisplay.DisplayError("Not Ready To Harvest");
+            MessageDisplay.DisplayMessage("Not Ready To Harvest");
             return;
         }
+
         SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
-        //Empty out all the locations for plantation of new crops
+        //Empty out all the locations for plantation of new crops //Object pooling
         for (int i = 0; i < m_ResourceLocationInfo.Count; i++)
         {
             ResourceLocationInfo resourceLocation = m_ResourceLocationInfo[i];
@@ -130,6 +131,7 @@ public class LandController : MonoBehaviour
             }
         }
         
+        //MVC view Update
         m_LandView.m_QuantityOfReadToHarvestText.text = m_Land.ReadyToHarvestQuantity.ToString();
         m_LandView.m_QuantityOfSeedsText.text = m_Land.SeedQuantity.ToString();
 
@@ -141,13 +143,13 @@ public class LandController : MonoBehaviour
         SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
         if (m_Land.SeedQuantity <= 0 && m_RequireSeeds)
         {
-            ErrorDisplay.DisplayError("Not Enough Seeds");
+            MessageDisplay.DisplayMessage("Not Enough Seeds");
             return;
         }
         InventoryInfo inventoryInfo = Inventory.InventoryList.Find(x => x.resourceType == m_RequiredResourceType);
         if (inventoryInfo.amount <= 0)
         {
-            ErrorDisplay.DisplayError($"Not enough {m_RequiredResourceType}");
+            MessageDisplay.DisplayMessage($"Not enough {m_RequiredResourceType}");
             return;
         }
         else 
@@ -155,6 +157,7 @@ public class LandController : MonoBehaviour
             Inventory.RemoveInventoryItem(m_RequiredResourceType, 1);
         }
         
+        //Used pooled objects to display resource plantation
         for (int i = 0; i < m_ResourceLocationInfo.Count; i++) 
         {
             if (!m_ResourceLocationInfo[i].IsOccupided) 

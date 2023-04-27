@@ -2,19 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Used to grow resource at runtime by changing scale of the object
 public class ResourceController : MonoBehaviour
 {
     float m_GrowFactor;
     public float m_GrowSpeed;
     [HideInInspector] public bool m_IsReadyToHarvest;
-    [HideInInspector]  public LandController m_LandController;
+    [HideInInspector]  public LandController m_LandController; //Land Contoller upon respective land the Resource is planted
 
     private void OnEnable()
     {
-        StartCoroutine(Co_GrowCrop());
+        StartCoroutine(Co_GrowResource());
 
     }
-    IEnumerator Co_GrowCrop() 
+    IEnumerator Co_GrowResource() 
     {
         transform.localScale = Vector3.zero;
         while (m_GrowFactor < 2) 
@@ -27,6 +28,8 @@ public class ResourceController : MonoBehaviour
         m_LandController.ReadyToHarvest();
     }
 
+
+    //Reset via object pooling
     public void ResetResource() 
     {
         StopAllCoroutines();

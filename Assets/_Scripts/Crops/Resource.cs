@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Type of resourceType enum
 public enum ResourceType
 {
     None,
@@ -11,7 +12,8 @@ public enum ResourceType
     Water,
     CowDung
 }
-[CreateAssetMenu(menuName = "ScriptableObjects/Resource")]
+[CreateAssetMenu(menuName = "ScriptableObjects/Resource")] // Scriptable Object which instantiates prefab for object pooling
+// Object pooling is done in LandController.cs
 public class Resource : ScriptableObject
 {
     public string Name;

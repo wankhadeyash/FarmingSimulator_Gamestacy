@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Basic Player Controller script-- uses CharacterController
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    //Fired from gameManager.cs whenever change in game state
     private void OnGameManagerStateChanged(GameState state)
     {
 
@@ -41,14 +43,6 @@ public class PlayerController : MonoBehaviour
 
         }
     }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
 
     void Update()
     {

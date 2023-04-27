@@ -15,6 +15,7 @@ public enum GameState
     Paused,
     Resume
 }
+//Initialized on MainMenu scene
 public class GameManager : MonoBehaviour //Handles Game state of game, like Start, Initialize and ready states
                                          //Fires event when state is changed so other classes can act accordingly
 {
@@ -30,12 +31,9 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
         LevelManager.OnLevelChanged += OnLevelChanged;
     }
 
-    
-
     private void OnDisable()
     {
         LevelManager.OnLevelChanged -= OnLevelChanged;
-
     }
 
     private void OnLevelChanged(int arg0)
@@ -94,7 +92,7 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
     }
     private void PlayingStateHandler()
     {
-        Debug.Log("Entered Playing");
+
     }
 
     private void PausedStateHandler()
@@ -103,7 +101,6 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
     }
     private void ResumeStateHandler() 
     {
-       // ChangeGameManagerState(GameState.Playing);
 
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+//View class for MVC pattern (Land.cs, LandView.cs, LandController)
+//Responsible for displaying and updating data regarding respective land to user
 public class LandView : MonoBehaviour
 {
     public Canvas m_Canvas;

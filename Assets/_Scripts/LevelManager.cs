@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+
+//Initialized on MainMenu scene
+//Responsible for changing scenes
 public class LevelManager : MonoBehaviour
 {
-    public static UnityAction<int> OnLevelChanged; // int-> Scene index
+    public static UnityAction<int> OnLevelChanged; // int-> Scene index // Whcn scene is changed fires the event
     public AudioClip m_ButtonPressAudio;
     int m_CurrentSceneId;
     public int CurrentSceneId => s_Instance.m_CurrentSceneId;
@@ -47,7 +50,6 @@ public class LevelManager : MonoBehaviour
         m_CurrentSceneId = sceneId;
         
     }
-
     public void ExitGame() 
     {
         SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);

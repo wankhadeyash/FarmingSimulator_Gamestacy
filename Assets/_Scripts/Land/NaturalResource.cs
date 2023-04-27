@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using System;
 
+//Resources which are grown naturally like water in this game //Fairly similiar to LandController with some respective changes
 public class NaturalResource : MonoBehaviour
 {
     public Canvas m_Canvas;
@@ -69,7 +70,7 @@ public class NaturalResource : MonoBehaviour
         SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
         if (m_ReadyToHarvestCount <= 0)
         {
-            ErrorDisplay.DisplayError("Not Ready To Harvest");
+            MessageDisplay.DisplayMessage("Not Ready To Harvest");
             return;
         }
         else 

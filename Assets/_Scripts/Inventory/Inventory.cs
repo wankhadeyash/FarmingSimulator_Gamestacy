@@ -3,19 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+
+// Inventory Info data struct
 public struct InventoryInfo
 {
     public ResourceType resourceType;
     public int amount;
 
 }
-public class Inventory : MonoBehaviour
+
+
+public class Inventory : MonoBehaviour // A data class from which every entity fetches respective data
 {
-    
-    public static Inventory s_Instance;
-    public static UnityAction OnInventoryUpdated;
+    private static Inventory s_Instance; //Private Instance used to call non static methods from static methods --> See AddInventoryItem()
+    // and AddInventoryItemInternal()
+
+    public static UnityAction OnInventoryUpdated;// Event fired if anychange in inventory
+
     List<InventoryInfo> m_InventoryList = new List<InventoryInfo>();
-    public static List<InventoryInfo> InventoryList => s_Instance.m_InventoryList;
+
+    public static List<InventoryInfo> InventoryList => s_Instance.m_InventoryList; //Property
 
     private void OnEnable()
     {
@@ -28,6 +35,7 @@ public class Inventory : MonoBehaviour
 
     }
 
+    // GameManager fires this event when change in game state
     private void OnGameManagerStateChanged(GameState state)
     {
         switch (state)
@@ -56,7 +64,7 @@ public class Inventory : MonoBehaviour
             Destroy(this);
     }
 
-
+    //Building Inventory on Start i.e adding all the possible inventory item is list based upon ResourceType Enum values
     void BuildInventory() 
     {
         var values = Enum.GetValues(typeof(ResourceType));
@@ -66,6 +74,7 @@ public class Inventory : MonoBehaviour
             m_InventoryList.Add(temp);
         }
     }
+
 
     public static void AddInventoryItem(ResourceType cropType, int amountAdded) 
     {
@@ -85,6 +94,8 @@ public class Inventory : MonoBehaviour
         }
         OnInventoryUpdated?.Invoke();
     }
+
+
     public static void RemoveInventoryItem(ResourceType cropType, int amountRemoved)
     {
         s_Instance.RemoveInventoryItemInternal(cropType, amountRemoved);
