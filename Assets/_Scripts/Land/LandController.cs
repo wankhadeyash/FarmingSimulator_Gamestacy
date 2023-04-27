@@ -4,21 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct CropLocationInfo 
+public struct ResourceLocationInfo 
 {
     public GameObject Location;
-    [HideInInspector] public CropController CurrentCropController;
+    [HideInInspector] public ResourceController CurrentResourceController;
     public bool IsOccupided;
 }
 public class LandController : MonoBehaviour
 {
     Land m_Land = new Land();
-    public CropType m_RequiredCropType;
-    public CropType m_LandCropType;
-    public Crop m_CropToPlant;
+    public AudioClip m_ButtonPressAudio;
+    public ResourceType m_RequiredResourceType;
+    public ResourceType m_LandResourceType;
+    public Resource m_ResourceToPlant;
     public LandView m_LandView;
     public bool m_RequireSeeds;
-    public List<CropLocationInfo> m_CropLocationInfo; // Location at which plants will be planted
+    public List<ResourceLocationInfo> m_ResourceLocationInfo; // Location at which plants will be planted
     Animator m_Animator;
     private void OnEnable()
     {
@@ -45,7 +46,7 @@ public class LandController : MonoBehaviour
                 break;
             case GameState.Initialize:
                 m_Animator = GetComponent<Animator>();
-                m_LandView.m_LandDisplayName.text = m_LandCropType.ToString();
+                m_LandView.m_LandDisplayName.text = m_LandResourceType.ToString();
                 PoolCrops();
                 break;
             case GameState.Playing:
@@ -62,26 +63,26 @@ public class LandController : MonoBehaviour
 
     private void OnInventoryUpdated()
     {
-        m_LandView.m_QuantityOfResourceText.text = Inventory.InventoryList.Find(x => x.cropType == m_RequiredCropType).amount.ToString();
+        m_LandView.m_QuantityOfResourceText.text = Inventory.InventoryList.Find(x => x.resourceType == m_RequiredResourceType).amount.ToString();
 
     }
 
-    //Object pooling crops
+    //Object pooling resource
     void PoolCrops() 
     {
-        for (int i = 0; i < m_CropLocationInfo.Count; i++) 
+        for (int i = 0; i < m_ResourceLocationInfo.Count; i++) 
         {
-            CropLocationInfo cropLocation = m_CropLocationInfo[i];
-            cropLocation.CurrentCropController = Instantiate(m_CropToPlant.Prefab, m_CropLocationInfo[i].Location.transform.position, Quaternion.identity, m_CropLocationInfo[i].Location.transform).GetComponent<CropController>();
-            cropLocation.CurrentCropController.m_LandController = this;
+            ResourceLocationInfo resourceLocation = m_ResourceLocationInfo[i];
+            resourceLocation.CurrentResourceController = Instantiate(m_ResourceToPlant.Prefab, m_ResourceLocationInfo[i].Location.transform.position, Quaternion.identity, m_ResourceLocationInfo[i].Location.transform).GetComponent<ResourceController>();
+            resourceLocation.CurrentResourceController.m_LandController = this;
             if (i<2)
             {
-                cropLocation.CurrentCropController.gameObject.SetActive(true);
-                cropLocation.IsOccupided = true;
+                resourceLocation.CurrentResourceController.gameObject.SetActive(true);
+                resourceLocation.IsOccupided = true;
             }
             else
-                cropLocation.CurrentCropController.gameObject.SetActive(false);
-            m_CropLocationInfo[i] = cropLocation;
+                resourceLocation.CurrentResourceController.gameObject.SetActive(false);
+            m_ResourceLocationInfo[i] = resourceLocation;
         }
     }
     // Start is called before the first frame update
@@ -109,23 +110,23 @@ public class LandController : MonoBehaviour
             ErrorDisplay.DisplayError("Not Ready To Harvest");
             return;
         }
-
+        SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
         //Empty out all the locations for plantation of new crops
-        for (int i = 0; i < m_CropLocationInfo.Count; i++)
+        for (int i = 0; i < m_ResourceLocationInfo.Count; i++)
         {
-            CropLocationInfo cropLocation = m_CropLocationInfo[i];
-            if (cropLocation.IsOccupided && cropLocation.CurrentCropController.m_IsReadyToHarvest)
+            ResourceLocationInfo resourceLocation = m_ResourceLocationInfo[i];
+            if (resourceLocation.IsOccupided && resourceLocation.CurrentResourceController.m_IsReadyToHarvest)
             {
-                //Free crop location to plant for next iteration
-                cropLocation.IsOccupided = false;
-                cropLocation.CurrentCropController.ResetCrop();
-                cropLocation.CurrentCropController.gameObject.SetActive(false);
+                //Free resource location to plant for next iteration
+                resourceLocation.IsOccupided = false;
+                resourceLocation.CurrentResourceController.ResetResource();
+                resourceLocation.CurrentResourceController.gameObject.SetActive(false);
                 m_Land.SeedQuantity += Random.Range(1, 5);
                 m_Land.ReadyToHarvestQuantity--;
-                m_CropLocationInfo[i] = cropLocation;
+                m_ResourceLocationInfo[i] = resourceLocation;
 
                 //Add Item in inventory
-                Inventory.AddInventoryItem(m_LandCropType, 1);
+                Inventory.AddInventoryItem(m_LandResourceType, 1);
             }
         }
         
@@ -137,30 +138,31 @@ public class LandController : MonoBehaviour
     public void PlantCrop() 
     {
         //Cannot plant if no seeds or no resources are available in inventory
+        SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
         if (m_Land.SeedQuantity <= 0 && m_RequireSeeds)
         {
             ErrorDisplay.DisplayError("Not Enough Seeds");
             return;
         }
-        InventoryInfo inventoryInfo = Inventory.InventoryList.Find(x => x.cropType == m_RequiredCropType);
+        InventoryInfo inventoryInfo = Inventory.InventoryList.Find(x => x.resourceType == m_RequiredResourceType);
         if (inventoryInfo.amount <= 0)
         {
-            ErrorDisplay.DisplayError($"Not enough {m_RequiredCropType}");
+            ErrorDisplay.DisplayError($"Not enough {m_RequiredResourceType}");
             return;
         }
         else 
         {
-            Inventory.RemoveInventoryItem(m_RequiredCropType, 1);
+            Inventory.RemoveInventoryItem(m_RequiredResourceType, 1);
         }
         
-        for (int i = 0; i < m_CropLocationInfo.Count; i++) 
+        for (int i = 0; i < m_ResourceLocationInfo.Count; i++) 
         {
-            if (!m_CropLocationInfo[i].IsOccupided) 
+            if (!m_ResourceLocationInfo[i].IsOccupided) 
             {
-                CropLocationInfo cropLocation = m_CropLocationInfo[i];
-                cropLocation.IsOccupided = true;
-                cropLocation.CurrentCropController.gameObject.SetActive(true);
-                m_CropLocationInfo[i] = cropLocation;
+                ResourceLocationInfo resourceLocation = m_ResourceLocationInfo[i];
+                resourceLocation.IsOccupided = true;
+                resourceLocation.CurrentResourceController.gameObject.SetActive(true);
+                m_ResourceLocationInfo[i] = resourceLocation;
                 m_Land.SeedQuantity--;
                 m_LandView.m_QuantityOfSeedsText.text = m_Land.SeedQuantity.ToString();
                 break;

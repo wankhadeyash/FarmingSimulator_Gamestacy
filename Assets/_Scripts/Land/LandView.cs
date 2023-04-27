@@ -6,6 +6,7 @@ using TMPro;
 public class LandView : MonoBehaviour
 {
     public Canvas m_Canvas;
+    public AudioClip m_UIOpenAudio;
     public TextMeshProUGUI m_LandDisplayName;
     public TextMeshProUGUI m_QuantityOfReadToHarvestText;
     public TextMeshProUGUI m_QuantityOfSeedsText;
@@ -19,6 +20,7 @@ public class LandView : MonoBehaviour
     {
         if (other.tag == "Player") 
         {
+            SoundManager.PlaySound(m_UIOpenAudio, AudioTrackType.UI);
             m_Canvas.gameObject.SetActive(true);
         }
     }

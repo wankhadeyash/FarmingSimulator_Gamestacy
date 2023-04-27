@@ -15,14 +15,14 @@ public class InventoryView : MonoBehaviour
     public Transform cropParent;
     // Add any additional UI elements here
 
-    public void UpdateView(List<Crop> crops)
+    public void UpdateView(List<Resource> crops)
     {
         foreach (Transform child in cropParent)
         {
             Destroy(child.gameObject);
         }
 
-        foreach (Crop crop in crops)
+        foreach (Resource crop in crops)
         {
             GameObject cropGO = Instantiate(cropPrefab, cropParent);
             CropView cropView = cropGO.GetComponent<CropView>();

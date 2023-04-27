@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 public struct InventoryInfo
 {
-    public CropType cropType;
+    public ResourceType resourceType;
     public int amount;
 
 }
@@ -59,23 +59,23 @@ public class Inventory : MonoBehaviour
 
     void BuildInventory() 
     {
-        var values = Enum.GetValues(typeof(CropType));
-        foreach (CropType type in values) 
+        var values = Enum.GetValues(typeof(ResourceType));
+        foreach (ResourceType type in values) 
         {
-            InventoryInfo temp = new InventoryInfo { cropType = type, amount = 0 };
+            InventoryInfo temp = new InventoryInfo { resourceType = type, amount = 0 };
             m_InventoryList.Add(temp);
         }
     }
 
-    public static void AddInventoryItem(CropType cropType, int amountAdded) 
+    public static void AddInventoryItem(ResourceType cropType, int amountAdded) 
     {
         s_Instance.AddInventoryItemInternal(cropType, amountAdded);
     }
-    void AddInventoryItemInternal(CropType cropType,int amountAdded) 
+    void AddInventoryItemInternal(ResourceType cropType,int amountAdded) 
     {
         for (int i = 0; i < m_InventoryList.Count; i++) 
         {
-            if (m_InventoryList[i].cropType == cropType) 
+            if (m_InventoryList[i].resourceType == cropType) 
             {
                 InventoryInfo temp = m_InventoryList[i];
                 temp.amount += amountAdded;
@@ -85,15 +85,15 @@ public class Inventory : MonoBehaviour
         }
         OnInventoryUpdated?.Invoke();
     }
-    public static void RemoveInventoryItem(CropType cropType, int amountRemoved)
+    public static void RemoveInventoryItem(ResourceType cropType, int amountRemoved)
     {
         s_Instance.RemoveInventoryItemInternal(cropType, amountRemoved);
     }
-    void RemoveInventoryItemInternal(CropType cropType, int amountRemoved) 
+    void RemoveInventoryItemInternal(ResourceType cropType, int amountRemoved) 
     {
         for (int i = 0; i < m_InventoryList.Count; i++)
         {
-            if (m_InventoryList[i].cropType == cropType)
+            if (m_InventoryList[i].resourceType == cropType)
             {
                 InventoryInfo temp = m_InventoryList[i];
                 temp.amount -= amountRemoved;

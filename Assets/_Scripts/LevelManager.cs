@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     public static UnityAction<int> OnLevelChanged; // int-> Scene index
+    public AudioClip m_ButtonPressAudio;
     int m_CurrentSceneId;
     public int CurrentSceneId => s_Instance.m_CurrentSceneId;
     private static LevelManager s_Instance;
@@ -41,8 +42,15 @@ public class LevelManager : MonoBehaviour
 
     public void ChangeScene(int sceneId)
     {
+        SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
         SceneManager.LoadScene(sceneId);
         m_CurrentSceneId = sceneId;
         
+    }
+
+    public void ExitGame() 
+    {
+        SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
+        Application.Quit();
     }
 }

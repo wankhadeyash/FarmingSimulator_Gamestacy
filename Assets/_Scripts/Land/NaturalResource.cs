@@ -7,7 +7,9 @@ using System;
 public class NaturalResource : MonoBehaviour
 {
     public Canvas m_Canvas;
-    public CropType m_LandCropType;
+    public AudioClip m_UIOpenAudio;
+    public AudioClip m_ButtonPressAudio;
+    public ResourceType m_LandCropType;
     public float m_ResourceGenerateInterval;
     public TextMeshProUGUI m_QuantityOfReadToHarvestText;
     public TextMeshProUGUI m_LandDisplayNameText;
@@ -64,6 +66,7 @@ public class NaturalResource : MonoBehaviour
 
     public void HarvestAll()
     {
+        SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
         if (m_ReadyToHarvestCount <= 0)
         {
             ErrorDisplay.DisplayError("Not Ready To Harvest");
@@ -81,7 +84,7 @@ public class NaturalResource : MonoBehaviour
     }
     private void OnInventoryUpdated()
     {
-       Inventory.InventoryList.Find(x => x.cropType == m_LandCropType).amount.ToString();
+       Inventory.InventoryList.Find(x => x.resourceType == m_LandCropType).amount.ToString();
 
     }
 
@@ -89,6 +92,7 @@ public class NaturalResource : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            SoundManager.PlaySound(m_UIOpenAudio, AudioTrackType.UI);
             m_Canvas.gameObject.SetActive(true);
         }
     }

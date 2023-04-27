@@ -13,7 +13,7 @@ public class CropView
     public Text quantityText;
     // Add any additional UI elements here
 
-    public void UpdateView(Crop crop)
+    public void UpdateView(Resource crop)
     {
         nameText.text = crop.name;
         // Update any additional UI elements here
