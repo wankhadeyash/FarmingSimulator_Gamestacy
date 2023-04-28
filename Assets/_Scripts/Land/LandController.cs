@@ -102,7 +102,7 @@ public class LandController : MonoBehaviour
         m_LandView.m_QuantityOfReadToHarvestText.text = m_Land.ReadyToHarvestQuantity.ToString();
     }
 
-    //Harvest all ready to harvest resources
+    //Called from UI Button of land // Harvest all the resources
     public void HarvestAll() 
     {
         if (m_Land.ReadyToHarvestQuantity <= 0)
@@ -137,6 +137,7 @@ public class LandController : MonoBehaviour
 
     }
 
+    //Called from UI Button of land // Plants Resources
     public void PlantCrop() 
     {
         //Cannot plant if no seeds or no resources are available in inventory

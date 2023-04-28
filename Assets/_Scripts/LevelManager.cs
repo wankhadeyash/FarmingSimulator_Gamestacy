@@ -43,6 +43,7 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
     }
 
+    //Called from UI Button-> Start Game
     public void ChangeScene(int sceneId)
     {
         SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
@@ -50,6 +51,8 @@ public class LevelManager : MonoBehaviour
         m_CurrentSceneId = sceneId;
         
     }
+
+    //Called from UI Button-> Exit 
     public void ExitGame() 
     {
         SoundManager.PlaySound(m_ButtonPressAudio, AudioTrackType.UI);
