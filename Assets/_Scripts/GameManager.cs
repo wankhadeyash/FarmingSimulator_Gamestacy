@@ -16,14 +16,14 @@ public enum GameState
     Resume
 }
 //Initialized on MainMenu scene
-public class GameManager : MonoBehaviour //Handles Game state of game, like Start, Initialize and ready states
-                                         //Fires event when state is changed so other classes can act accordingly
+//Handles Game state of game, like Start, Initialize and ready states
+//Fires event when state is changed so other classes can act accordingly
+public class GameManager : Singleton<GameManager> 
 {
 
     public static UnityAction<GameState> OnGameManagerStateChanged;
     private GameState m_CurrentState;
     public static GameState CurrentState => s_Instance.m_CurrentState;
-    private static GameManager s_Instance;
 
 
     private void OnEnable()
@@ -41,17 +41,8 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
         ChangeGameManagerState(GameState.Start);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
-        if (s_Instance == null)
-        {
-            s_Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-            Destroy(gameObject);
-
         ChangeGameManagerState(GameState.Start);
     }
 
@@ -86,10 +77,12 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
     {
         ChangeGameManagerState(GameState.Initialize);
     }
+
     private void InitializeStateHandler()
     {
         ChangeGameManagerState(GameState.Playing);
     }
+
     private void PlayingStateHandler()
     {
 
@@ -99,6 +92,7 @@ public class GameManager : MonoBehaviour //Handles Game state of game, like Star
     {
 
     }
+
     private void ResumeStateHandler() 
     {
 

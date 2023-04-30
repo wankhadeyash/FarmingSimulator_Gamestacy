@@ -4,18 +4,9 @@ using UnityEngine;
 using TMPro;
 
 //Responsible for displaying Messages like NO SEEDS ARE PRESENT
-public class MessageDisplay : MonoBehaviour
+public class MessageDisplay : Singleton<MessageDisplay>
 {
-    private static MessageDisplay s_Instance;
     public TextMeshProUGUI m_MessageTextField;
-    // Start is called before the first frame update
-    void Start()
-    {
-        if (s_Instance == null)
-            s_Instance = this;
-        else
-            Destroy(this);
-    }
 
     public static void DisplayMessage(string message) 
     {
