@@ -7,13 +7,12 @@ using UnityEngine.SceneManagement;
 
 //Initialized on MainMenu scene
 //Responsible for changing scenes
-public class LevelManager : MonoBehaviour
+public class LevelManager : Singleton<LevelManager>
 {
     public static UnityAction<int> OnLevelChanged; // int-> Scene index // Whcn scene is changed fires the event
     public AudioClip m_ButtonPressAudio;
     int m_CurrentSceneId;
     public int CurrentSceneId => s_Instance.m_CurrentSceneId;
-    private static LevelManager s_Instance;
 
     private void OnEnable()
     {
@@ -29,18 +28,6 @@ public class LevelManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode arg1)
     {
         OnLevelChanged?.Invoke(scene.buildIndex);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        if (s_Instance == null)
-        {
-            s_Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-            Destroy(gameObject);
     }
 
     //Called from UI Button-> Start Game

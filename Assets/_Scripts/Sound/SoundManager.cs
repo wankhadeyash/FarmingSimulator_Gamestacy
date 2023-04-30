@@ -21,21 +21,9 @@ public struct AudioTypeInfo
 //Initialized on MainMenu scene
 //Responsible for playing sounds
 // Has a method with parameters (AudioClip, AudioTrackType) AudioClip - Clip to play AudioTrackType - At which track should be played on
-public class SoundManager : MonoBehaviour
+public class SoundManager : Singleton<SoundManager>
 {
     public List<AudioTypeInfo> m_AudioTrackInfoList = new List<AudioTypeInfo>();
-
-    //Private Instance used to call non static methods from static methods
-    private static SoundManager s_Instance;
-    // Start is called before the first frame update
-    void Start()
-    {
-        if (s_Instance == null)
-            s_Instance = this;
-        else
-            Destroy(this);
-        DontDestroyOnLoad(gameObject);
-    }
 
     // Update is called once per frame
     void Update()

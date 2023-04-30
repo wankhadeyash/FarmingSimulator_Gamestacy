@@ -13,11 +13,8 @@ public struct InventoryInfo
 }
 
 
-public class Inventory : MonoBehaviour // A data class from which every entity fetches respective data
+public class Inventory : Singleton<Inventory> // A data class from which every entity fetches respective data
 {
-    private static Inventory s_Instance; //Private Instance used to call non static methods from static methods --> See AddInventoryItem()
-    // and AddInventoryItemInternal()
-
     public static UnityAction OnInventoryUpdated;// Event fired if anychange in inventory
 
     List<InventoryInfo> m_InventoryList = new List<InventoryInfo>();
@@ -55,13 +52,6 @@ public class Inventory : MonoBehaviour // A data class from which every entity f
                 break;
 
         }
-    }
-    private void Start()
-    {
-        if (s_Instance == null)
-            s_Instance = this;
-        else
-            Destroy(this);
     }
 
     //Building Inventory on Start i.e adding all the possible inventory item is list based upon ResourceType Enum values
