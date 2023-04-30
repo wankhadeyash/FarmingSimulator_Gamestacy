@@ -1,50 +1,50 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Serializable struct to hold data about the physical location of a resource to plant and its current status (occupied or not)
 [System.Serializable]
-//Data about physical location of Resource to plant and current status of location i.e is occupied or not
-public struct ResourceLocationInfo 
+public struct ResourceLocationInfo
 {
     public GameObject Location;
     [HideInInspector] public ResourceController CurrentResourceController;
     public bool IsOccupided;
 }
 
-//Controller class for MVC pattern (Land.cs, LandView.cs, LandController)
+// Controller class for the MVC pattern (Land.cs, LandView.cs, LandController.cs)
 // Also uses object pooling to pool the resource
 public class LandController : MonoBehaviour
 {
-    Land m_Land = new Land(); // MVC data class
+    // Data class for the MVC pattern
+    Land m_Land = new Land();
 
-    public AudioClip m_ButtonPressAudio;
+    [SerializeField] AudioClip m_ButtonPressAudio;
 
-    public ResourceType m_RequiredResourceType; //Which other resouce is required to grow resource on this land
-    public ResourceType m_LandResourceType; //Current land growing resource type
+    [SerializeField] ResourceType m_RequiredResourceType; // Which other resource is required to grow a resource on this land
+    [SerializeField] ResourceType m_LandResourceType; // Current land growing resource type
 
-    public Resource m_ResourceToPlant;// Scriptable object which resource to plant
+    [SerializeField] ResourceData m_ResourceToPlant; // Scriptable object which resource to plant
 
-    public LandView m_LandView;// MVC view
+    [SerializeField] LandView m_LandView; // MVC view
 
-    public bool m_RequireSeeds; // Does it requires seeds or can be grown based on required resource only
+    [SerializeField] bool m_RequireSeeds; // Does it require seeds or can be grown based on the required resource only
 
-    public List<ResourceLocationInfo> m_ResourceLocationInfo; // Location at which plants will be planted
+    [SerializeField] List<ResourceLocationInfo> m_ResourceLocationInfo; // List of locations at which plants will be planted
 
     Animator m_Animator;
+
     private void OnEnable()
     {
         GameManager.OnGameManagerStateChanged += OnGameManagerStateChanged;
         Inventory.OnInventoryUpdated += OnInventoryUpdated;
     }
 
-
-
     private void OnDisable()
     {
         GameManager.OnGameManagerStateChanged -= OnGameManagerStateChanged;
         Inventory.OnInventoryUpdated -= OnInventoryUpdated;
     }
+
     private void OnGameManagerStateChanged(GameState state)
     {
         switch (state)
@@ -68,22 +68,21 @@ public class LandController : MonoBehaviour
         }
     }
 
-    //Whenever change in inventory-> look for change 
+    // Whenever there is a change in inventory, update the quantity of required resource text in the view
     private void OnInventoryUpdated()
     {
         m_LandView.m_QuantityOfResourceText.text = Inventory.InventoryList.Find(x => x.resourceType == m_RequiredResourceType).amount.ToString();
-
     }
 
-    //Resource Object pooling
-    void PoolCrops() 
+    // Resource object pooling - instantiate and deactivate resources at all locations
+    void PoolCrops()
     {
-        for (int i = 0; i < m_ResourceLocationInfo.Count; i++) 
+        for (int i = 0; i < m_ResourceLocationInfo.Count; i++)
         {
             ResourceLocationInfo resourceLocation = m_ResourceLocationInfo[i];
             resourceLocation.CurrentResourceController = Instantiate(m_ResourceToPlant.Prefab, m_ResourceLocationInfo[i].Location.transform.position, Quaternion.identity, m_ResourceLocationInfo[i].Location.transform).GetComponent<ResourceController>();
             resourceLocation.CurrentResourceController.m_LandController = this;
-            if (i<2)
+            if (i < 2)
             {
                 resourceLocation.CurrentResourceController.gameObject.SetActive(true);
                 resourceLocation.IsOccupided = true;
@@ -94,7 +93,7 @@ public class LandController : MonoBehaviour
         }
     }
 
-    //Called from respective resourceController letting land controller know that it is ready to harvest
+    // Called from respective resourceController letting land controller know that it is ready to harvest
     public void ReadyToHarvest()
     {
         m_Animator.Play("ReadyToHarvest");

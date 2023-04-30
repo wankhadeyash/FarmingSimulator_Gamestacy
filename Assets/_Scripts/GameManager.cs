@@ -16,8 +16,9 @@ public enum GameState
     Resume
 }
 //Initialized on MainMenu scene
-public class GameManager : Singleton<GameManager> //Handles Game state of game, like Start, Initialize and ready states
-                                         //Fires event when state is changed so other classes can act accordingly
+//Handles Game state of game, like Start, Initialize and ready states
+//Fires event when state is changed so other classes can act accordingly
+public class GameManager : Singleton<GameManager> 
 {
 
     public static UnityAction<GameState> OnGameManagerStateChanged;
@@ -76,10 +77,12 @@ public class GameManager : Singleton<GameManager> //Handles Game state of game, 
     {
         ChangeGameManagerState(GameState.Initialize);
     }
+
     private void InitializeStateHandler()
     {
         ChangeGameManagerState(GameState.Playing);
     }
+
     private void PlayingStateHandler()
     {
 
@@ -89,6 +92,7 @@ public class GameManager : Singleton<GameManager> //Handles Game state of game, 
     {
 
     }
+
     private void ResumeStateHandler() 
     {
 

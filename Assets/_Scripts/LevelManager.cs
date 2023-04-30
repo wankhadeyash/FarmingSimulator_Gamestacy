@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class LevelManager : Singleton<LevelManager>
 {
     public static UnityAction<int> OnLevelChanged; // int-> Scene index // Whcn scene is changed fires the event
-    public AudioClip m_ButtonPressAudio;
+    [SerializeField] AudioClip m_ButtonPressAudio;
     int m_CurrentSceneId;
     public int CurrentSceneId => s_Instance.m_CurrentSceneId;
 

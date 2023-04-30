@@ -9,9 +9,7 @@ public struct InventoryInfo
 {
     public ResourceType resourceType;
     public int amount;
-
 }
-
 
 public class Inventory : Singleton<Inventory> // A data class from which every entity fetches respective data
 {
@@ -19,7 +17,7 @@ public class Inventory : Singleton<Inventory> // A data class from which every e
 
     List<InventoryInfo> m_InventoryList = new List<InventoryInfo>();
 
-    public static List<InventoryInfo> InventoryList => s_Instance.m_InventoryList; //Property
+    public static List<InventoryInfo> InventoryList => s_Instance.m_InventoryList; // Property
 
     private void OnEnable()
     {
@@ -29,10 +27,9 @@ public class Inventory : Singleton<Inventory> // A data class from which every e
     private void OnDisable()
     {
         GameManager.OnGameManagerStateChanged -= OnGameManagerStateChanged;
-
     }
 
-    // GameManager fires this event when change in game state
+    // GameManager fires this event when there is a change in game state
     private void OnGameManagerStateChanged(GameState state)
     {
         switch (state)
@@ -50,31 +47,31 @@ public class Inventory : Singleton<Inventory> // A data class from which every e
                 break;
             default:
                 break;
-
         }
     }
 
-    //Building Inventory on Start i.e adding all the possible inventory item is list based upon ResourceType Enum values
-    void BuildInventory() 
+    // Building Inventory on Start, i.e., adding all the possible inventory items to the list based upon ResourceType Enum values
+    void BuildInventory()
     {
         var values = Enum.GetValues(typeof(ResourceType));
-        foreach (ResourceType type in values) 
+        foreach (ResourceType type in values)
         {
             InventoryInfo temp = new InventoryInfo { resourceType = type, amount = 0 };
             m_InventoryList.Add(temp);
         }
     }
 
-
-    public static void AddInventoryItem(ResourceType cropType, int amountAdded) 
+    // Adds the specified amount of inventory item of the specified type to the inventory list and invokes the OnInventoryUpdated event.
+    public static void AddInventoryItem(ResourceType cropType, int amountAdded)
     {
         s_Instance.AddInventoryItemInternal(cropType, amountAdded);
     }
-    void AddInventoryItemInternal(ResourceType cropType,int amountAdded) 
+
+    void AddInventoryItemInternal(ResourceType cropType, int amountAdded)
     {
-        for (int i = 0; i < m_InventoryList.Count; i++) 
+        for (int i = 0; i < m_InventoryList.Count; i++)
         {
-            if (m_InventoryList[i].resourceType == cropType) 
+            if (m_InventoryList[i].resourceType == cropType)
             {
                 InventoryInfo temp = m_InventoryList[i];
                 temp.amount += amountAdded;
@@ -85,12 +82,13 @@ public class Inventory : Singleton<Inventory> // A data class from which every e
         OnInventoryUpdated?.Invoke();
     }
 
-
+    // Removes the specified amount of inventory item of the specified type from the inventory list and invokes the OnInventoryUpdated event.
     public static void RemoveInventoryItem(ResourceType cropType, int amountRemoved)
     {
         s_Instance.RemoveInventoryItemInternal(cropType, amountRemoved);
     }
-    void RemoveInventoryItemInternal(ResourceType cropType, int amountRemoved) 
+
+    void RemoveInventoryItemInternal(ResourceType cropType, int amountRemoved)
     {
         for (int i = 0; i < m_InventoryList.Count; i++)
         {
@@ -103,6 +101,5 @@ public class Inventory : Singleton<Inventory> // A data class from which every e
             }
         }
         OnInventoryUpdated?.Invoke();
-
     }
 }
