@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 
 //Responsible for displaying Messages like NO SEEDS ARE PRESENT
-public class MessageDisplay : Singleton<MessageDisplay>
+public class MessageDisplay : SingletonBase<MessageDisplay>
 {
     public TextMeshProUGUI m_MessageTextField;
 

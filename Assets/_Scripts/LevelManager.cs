@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 //Initialized on MainMenu scene
 //Responsible for changing scenes
-public class LevelManager : Singleton<LevelManager>
+public class LevelManager : SingletonBase<LevelManager>
 {
     public static UnityAction<int> OnLevelChanged; // int-> Scene index // Whcn scene is changed fires the event
     [SerializeField] AudioClip m_ButtonPressAudio;

@@ -19,7 +19,7 @@ public struct AudioTypeInfo
 }
 
 // Singleton class that manages sound effects in the game
-public class SoundManager : Singleton<SoundManager>
+public class SoundManager : SingletonBase<SoundManager>
 {
     // List to hold audio sources and their track types
     [SerializeField] List<AudioTypeInfo> m_AudioTrackInfoList = new List<AudioTypeInfo>();

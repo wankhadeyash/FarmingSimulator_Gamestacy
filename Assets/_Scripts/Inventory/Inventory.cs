@@ -11,7 +11,7 @@ public struct InventoryInfo
     public int amount;
 }
 
-public class Inventory : Singleton<Inventory> // A data class from which every entity fetches respective data
+public class Inventory : SingletonBase<Inventory> // A data class from which every entity fetches respective data
 {
     public static UnityAction OnInventoryUpdated;// Event fired if anychange in inventory
 

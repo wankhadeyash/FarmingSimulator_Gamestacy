@@ -18,7 +18,7 @@ public enum GameState
 //Initialized on MainMenu scene
 //Handles Game state of game, like Start, Initialize and ready states
 //Fires event when state is changed so other classes can act accordingly
-public class GameManager : Singleton<GameManager> 
+public class GameManager : SingletonBase<GameManager> 
 {
 
     public static UnityAction<GameState> OnGameManagerStateChanged;
