@@ -157,7 +157,7 @@ public class LandController : MonoBehaviour
             Inventory.RemoveInventoryItem(m_RequiredResourceType, 1);
         }
         
-        //Used pooled objects to display resource plantation
+        //Display crops
         for (int i = 0; i < m_ResourceLocationInfo.Count; i++) 
         {
             if (!m_ResourceLocationInfo[i].IsOccupided) 

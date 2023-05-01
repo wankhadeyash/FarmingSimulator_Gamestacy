@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Singleton<T> : MonoBehaviour where T : Singleton<T>
+public class SingletonBase<T> : MonoBehaviour where T : SingletonBase<T>
 {
     // Declare a static instance variable that will hold the single instance of the class.
     protected static T s_Instance;
